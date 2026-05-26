@@ -25,7 +25,7 @@ WEIGHTS = {
     "distraction": 0.15,
 }
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fatigue.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data/fatigue.db")
 CAMERA_INDEX = int(os.getenv("CAMERA_INDEX", "0"))
 FRAME_RATE = int(os.getenv("FRAME_RATE", "10"))
 EAR_THRESHOLD_DEFAULT = float(os.getenv("EAR_THRESHOLD_DEFAULT", "0.25"))

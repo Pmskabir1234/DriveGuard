@@ -36,7 +36,7 @@ logger = get_logger(__name__)
 app = FastAPI(title="Smart Driver Fatigue & Drowsiness Detection System", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://drive-guard-ideatex.vercel.app/"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

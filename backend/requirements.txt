@@ -3,7 +3,7 @@ fastapi>=0.100.0
 uvicorn[standard]>=0.20.0
 
 # Computer vision — use whatever is already installed (no source builds)
-opencv-python>=4.8.0
+opencv-python-headless>=4.8.0
 mediapipe>=0.10.0
 
 # Numerics — accept any pre-built wheel, no source compilation needed
