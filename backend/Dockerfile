@@ -3,14 +3,8 @@ FROM python:3.10-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    mesa-utils \
     libgl1 \
-    libegl1 \
-    libgles2-mesa \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 

@@ -1,19 +1,28 @@
 # Core API
-fastapi>=0.100.0
-uvicorn[standard]>=0.20.0
+# fastapi>=0.100.0
+# uvicorn[standard]>=0.20.0
 
-# Computer vision — use whatever is already installed (no source builds)
-opencv-python-headless>=4.8.0
-mediapipe>=0.10.0
+# # Computer vision — use whatever is already installed (no source builds)
+# opencv-python-headless>=4.8.0
+# mediapipe>=0.10.0
 
-# Numerics — accept any pre-built wheel, no source compilation needed
-numpy>=1.24.0
+# # Numerics — accept any pre-built wheel, no source compilation needed
+# numpy>=1.24.0
 
-# Database
-sqlalchemy>=2.0.0
+# # Database
+# sqlalchemy>=2.0.0
 aiosqlite>=0.19.0
-websockets
-# Utilities
+# websockets
+# # Utilities
 python-dotenv>=1.0.0
 pygame>=2.5.0
+python-multipart
+
+fastapi
+uvicorn
+opencv-python-headless
+mediapipe==0.10.14
+numpy
+sqlalchemy
+websockets
 python-multipart

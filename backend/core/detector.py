@@ -55,13 +55,23 @@ def _build_face_landmarker() -> FaceLandmarker | None:
         logger.error("face_landmarker.task not found at %s", _FACE_MODEL)
         return None
     try:
+        # options = FaceLandmarkerOptions(
+        #     base_options=BaseOptions(model_asset_path=_FACE_MODEL),
+        #     running_mode=RunningMode.IMAGE,
+        #     num_faces=1,
+        #     output_face_blendshapes=False,
+        #     output_facial_transformation_matrixes=False,
+        # )
         options = FaceLandmarkerOptions(
-            base_options=BaseOptions(model_asset_path=_FACE_MODEL),
-            running_mode=RunningMode.IMAGE,
-            num_faces=1,
-            output_face_blendshapes=False,
-            output_facial_transformation_matrixes=False,
-        )
+    base_options=BaseOptions(
+        model_asset_path=_FACE_MODEL,
+        delegate=BaseOptions.Delegate.CPU,
+    ),
+    running_mode=RunningMode.IMAGE,
+    num_faces=1,
+    output_face_blendshapes=False,
+    output_facial_transformation_matrixes=False,
+)
         return FaceLandmarker.create_from_options(options)
     except Exception as exc:
         logger.error("Failed to create FaceLandmarker: %s", exc)
