@@ -50,34 +50,63 @@ _MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 _FACE_MODEL = os.path.abspath(os.path.join(_MODELS_DIR, "face_landmarker.task"))
 
 
+# def _build_face_landmarker() -> FaceLandmarker | None:
+#     if not os.path.isfile(_FACE_MODEL):
+#         logger.error("face_landmarker.task not found at %s", _FACE_MODEL)
+#         return None
+#     try:
+#         # options = FaceLandmarkerOptions(
+#         #     base_options=BaseOptions(model_asset_path=_FACE_MODEL),
+#         #     running_mode=RunningMode.IMAGE,
+#         #     num_faces=1,
+#         #     output_face_blendshapes=False,
+#         #     output_facial_transformation_matrixes=False,
+#         # )
+#         options = FaceLandmarkerOptions(
+#     base_options=BaseOptions(
+#         model_asset_path=_FACE_MODEL,
+#         delegate=BaseOptions.Delegate.CPU,
+#     ),
+#     running_mode=RunningMode.IMAGE,
+#     num_faces=1,
+#     output_face_blendshapes=False,
+#     output_facial_transformation_matrixes=False,
+# )
+#         return FaceLandmarker.create_from_options(options)
+#     except Exception as exc:
+#         logger.error("Failed to create FaceLandmarker: %s", exc)
+#         return None
+
 def _build_face_landmarker() -> FaceLandmarker | None:
     if not os.path.isfile(_FACE_MODEL):
         logger.error("face_landmarker.task not found at %s", _FACE_MODEL)
         return None
+
     try:
-        # options = FaceLandmarkerOptions(
-        #     base_options=BaseOptions(model_asset_path=_FACE_MODEL),
-        #     running_mode=RunningMode.IMAGE,
-        #     num_faces=1,
-        #     output_face_blendshapes=False,
-        #     output_facial_transformation_matrixes=False,
-        # )
+        base_options = BaseOptions(
+            model_asset_path=_FACE_MODEL,
+            delegate=BaseOptions.Delegate.CPU,
+        )
+
         options = FaceLandmarkerOptions(
-    base_options=BaseOptions(
-        model_asset_path=_FACE_MODEL,
-        delegate=BaseOptions.Delegate.CPU,
-    ),
-    running_mode=RunningMode.IMAGE,
-    num_faces=1,
-    output_face_blendshapes=False,
-    output_facial_transformation_matrixes=False,
-)
-        return FaceLandmarker.create_from_options(options)
+            base_options=base_options,
+            running_mode=RunningMode.IMAGE,
+            num_faces=1,
+            output_face_blendshapes=False,
+            output_facial_transformation_matrixes=False,
+        )
+
+        detector = FaceLandmarker.create_from_options(options)
+
+        logger.info("FaceLandmarker initialized with CPU delegate")
+
+        return detector
+
     except Exception as exc:
         logger.error("Failed to create FaceLandmarker: %s", exc)
         return None
-
-
+    
+    
 class FatigueDetector:
     """Process frames sent by the frontend and return detection state dicts."""
 
