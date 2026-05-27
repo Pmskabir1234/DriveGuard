@@ -124,10 +124,10 @@ Add screenshots here after running the local demo:
 
 ## Team / Hackathon Info
 
-- Team:
-- Members:
-- Event:
-- Demo link:
+- Team: Nova
+- Members: Titli Bhowmick ▫️ Saad Kabir
+- Event: Ideatex (GDG HITK)
+- Demo link: https://drie-guard-ideatex.vercel.app/
 
 ## Known Demo Notes
 

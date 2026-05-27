@@ -12,6 +12,7 @@ WebSocket protocol (server → client):
 import json
 import time
 from datetime import datetime
+import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Query, WebSocket, WebSocketDisconnect
@@ -33,10 +34,13 @@ except ImportError:
 load_dotenv()
 logger = get_logger(__name__)
 
+
+allowed_origins = os.getenv("ALLOWED_ORIGINS",'http://localhost:5173').split(",")
+
 app = FastAPI(title="Smart Driver Fatigue & Drowsiness Detection System", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://drive-guard-ideatex.vercel.app/"],
+    allow_origins=allowed_origins,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

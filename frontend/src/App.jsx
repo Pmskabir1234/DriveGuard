@@ -24,15 +24,15 @@ export default function App() {
         <nav>
           <NavLink to="/" end>
             <Activity size={16} />
-            Dashboard
+            <span>Dashboard</span>
           </NavLink>
           <NavLink to="/analytics">
             <BarChart3 size={16} />
-            Analytics
+            <span>Analytics</span>
           </NavLink>
           <NavLink to="/settings">
             <SettingsIcon size={16} />
-            Settings
+            <span>Settings</span>
           </NavLink>
         </nav>
 

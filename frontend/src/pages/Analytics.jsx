@@ -161,40 +161,42 @@ export default function Analytics({ userId }) {
             {(summary.recent_sessions || []).length === 0 ? (
               <p className="muted" style={{ fontSize: 13 }}>No sessions recorded yet.</p>
             ) : (
-              <table className="session-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Duration</th>
-                    <th>Peak Risk</th>
-                    <th>Avg Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(summary.recent_sessions || []).map((row) => (
-                    <tr key={row.id}>
-                      <td>{new Date(row.date).toLocaleString()}</td>
-                      <td>{row.duration_seconds}s</td>
-                      <td>
-                        <RiskBadge level={row.peak_risk} />
-                      </td>
-                      <td
-                        style={{
-                          color:
-                            row.avg_score >= 0.65
-                              ? "var(--high)"
-                              : row.avg_score >= 0.35
-                              ? "var(--moderate)"
-                              : "var(--safe)",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {Math.round(row.avg_score * 100)}%
-                      </td>
+              <div className="table-container">
+                <table className="session-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Duration</th>
+                      <th>Peak Risk</th>
+                      <th>Avg Score</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(summary.recent_sessions || []).map((row) => (
+                      <tr key={row.id}>
+                        <td>{new Date(row.date).toLocaleString()}</td>
+                        <td>{row.duration_seconds}s</td>
+                        <td>
+                          <RiskBadge level={row.peak_risk} />
+                        </td>
+                        <td
+                          style={{
+                            color:
+                              row.avg_score >= 0.65
+                                ? "var(--high)"
+                                : row.avg_score >= 0.35
+                                ? "var(--moderate)"
+                                : "var(--safe)",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {Math.round(row.avg_score * 100)}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </section>
         </>
