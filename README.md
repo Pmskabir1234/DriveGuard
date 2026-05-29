@@ -2,6 +2,11 @@
 
 A real-time AI-powered driver monitoring system for hackathon demos. It analyzes webcam frames, estimates eye closure, yawning, head pose, gaze, phone-use proxy signals, computes a fatigue risk score, streams live state to React, stores session history in SQLite, and explains why alerts were triggered.
 
+## Demo Screenshots
+
+<img width="1916" height="990" alt="Screenshot 2026-05-28 033239" src="https://github.com/user-attachments/assets/760273d1-ec99-49ed-887d-3c64547aa4e3" /> <img width="1918" height="992" alt="Screenshot 2026-05-28 033333" src="https://github.com/user-attachments/assets/8e7eb945-56fb-430d-b15c-2648fd693694" />
+
+
 ## Architecture
 
 ```text
@@ -113,14 +118,6 @@ The saved values are stored on the `User` row and applied to the next WebSocket 
 - [x] Personalized calibration UI
 - [x] Docker Compose setup
 
-## Demo Screenshots
-
-Add screenshots here after running the local demo:
-
-- Dashboard live monitoring
-- High-risk alert state
-- Analytics page
-- Calibration results
 
 ## Team / Hackathon Info
 
