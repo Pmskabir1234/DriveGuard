@@ -16,8 +16,6 @@ import { BarChart3 } from "lucide-react";
 import { getDailyAnalytics, getSummaryAnalytics, getTrendAnalytics } from "../api/apiClient";
 import { RISK_COLORS } from "../constants";
 
-const RISK_RANK = { Safe: 0, Moderate: 1, High: 2 };
-
 function RiskBadge({ level }) {
   return (
     <span className={`risk-badge ${level?.toLowerCase() || "safe"}`}>
@@ -30,9 +28,9 @@ RiskBadge.propTypes = { level: PropTypes.string };
 function CustomBarTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,140,255,0.25)", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#e8edf8" }}>
-      <div style={{ color: "#7a8aaa", marginBottom: 2 }}>{label}</div>
-      <div style={{ fontWeight: 700 }}>Avg score: {Math.round((payload[0]?.value || 0) * 100)}%</div>
+    <div className="panel" style={{ padding: "12px 16px", fontSize: 13, border: "1px solid var(--border-bright)" }}>
+      <div style={{ color: "var(--text-secondary)", marginBottom: 4, fontWeight: 500 }}>{label}</div>
+      <div style={{ fontWeight: 700, fontSize: 15 }}>Avg score: {Math.round((payload[0]?.value || 0) * 100)}%</div>
     </div>
   );
 }
@@ -42,9 +40,9 @@ function CustomPieTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const entry = payload[0];
   return (
-    <div style={{ background: "rgba(13,21,38,0.95)", border: "1px solid rgba(99,140,255,0.25)", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#e8edf8" }}>
-      <div style={{ fontWeight: 700, color: RISK_COLORS[entry.name] || "#e8edf8" }}>{entry.name}</div>
-      <div>{entry.value} events</div>
+    <div className="panel" style={{ padding: "12px 16px", fontSize: 13, border: "1px solid var(--border-bright)" }}>
+      <div style={{ fontWeight: 700, color: RISK_COLORS[entry.name] || "var(--text-primary)", fontSize: 15 }}>{entry.name}</div>
+      <div style={{ color: "var(--text-secondary)", fontWeight: 500 }}>{entry.value} events</div>
     </div>
   );
 }
@@ -77,46 +75,56 @@ export default function Analytics({ userId }) {
   return (
     <main className="page">
       <header className="topbar">
+        <div className="topbar-bg-glow" />
         <div>
-          <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <BarChart3 size={22} style={{ opacity: 0.7 }} />
-            Analytics
-          </h1>
+          <h1>Analytics</h1>
           <p>
-            {summary.total_sessions || 0} sessions&nbsp;·&nbsp;Peak risk:&nbsp;
+            {summary.total_sessions || 0} sessions recorded&nbsp;·&nbsp;Peak risk:&nbsp;
             <RiskBadge level={peakRisk} />
           </p>
         </div>
       </header>
 
       {loading ? (
-        <div style={{ color: "var(--text-secondary)", padding: "40px 0", textAlign: "center" }}>
-          Loading analytics…
+        <div style={{ color: "var(--text-secondary)", padding: "100px 0", textAlign: "center", fontSize: 18, fontWeight: 500 }}>
+          Analyzing data patterns…
         </div>
       ) : (
         <>
           <div className="analytics-grid">
             {/* 7-day bar chart */}
-            <section className="panel" style={{ padding: 20 }}>
-              <h2>7-Day Average Score</h2>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={daily} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#4a5568" }} tickLine={false} axisLine={false} />
-                  <YAxis domain={[0, 1]} tick={{ fontSize: 10, fill: "#4a5568" }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v * 100)}%`} />
-                  <Tooltip content={<CustomBarTooltip />} />
-                  <Bar dataKey="avg_score" radius={[4, 4, 0, 0]}>
+            <section className="panel" style={{ padding: 32 }}>
+              <h2>7-Day Performance</h2>
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={daily} margin={{ top: 20, right: 0, bottom: 0, left: -20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12, fill: "var(--text-secondary)", fontWeight: 500 }} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    domain={[0, 1]} 
+                    tick={{ fontSize: 12, fill: "var(--text-secondary)", fontWeight: 500 }} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(v) => `${Math.round(v * 100)}%`} 
+                  />
+                  <Tooltip content={<CustomBarTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
+                  <Bar dataKey="avg_score" barSize={32} radius={[8, 8, 8, 8]}>
                     {daily.map((entry, i) => (
                       <Cell
                         key={i}
                         fill={
                           entry.avg_score >= 0.65
-                            ? "#ef4444"
+                            ? "var(--high)"
                             : entry.avg_score >= 0.35
-                            ? "#f59e0b"
-                            : "#10b981"
+                            ? "var(--moderate)"
+                            : "var(--safe)"
                         }
-                        fillOpacity={0.85}
+                        fillOpacity={0.9}
                       />
                     ))}
                   </Bar>
@@ -125,57 +133,65 @@ export default function Analytics({ userId }) {
             </section>
 
             {/* Risk distribution pie */}
-            <section className="panel" style={{ padding: 20 }}>
-              <h2>Risk Distribution</h2>
-              <ResponsiveContainer width="100%" height={240}>
+            <section className="panel" style={{ padding: 32 }}>
+              <h2>Risk Profile</h2>
+              <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie
                     data={trends}
                     dataKey="count"
                     nameKey="risk_level"
-                    outerRadius={90}
-                    innerRadius={50}
-                    paddingAngle={3}
-                    label={({ name, percent }) =>
-                      `${name} ${Math.round(percent * 100)}%`
-                    }
-                    labelLine={false}
+                    outerRadius={100}
+                    innerRadius={70}
+                    paddingAngle={8}
+                    stroke="none"
                   >
                     {trends.map((entry) => (
                       <Cell
                         key={entry.risk_level}
-                        fill={RISK_COLORS[entry.risk_level] || "#64748b"}
-                        fillOpacity={0.85}
+                        fill={RISK_COLORS[entry.risk_level] || "var(--text-muted)"}
                       />
                     ))}
                   </Pie>
                   <Tooltip content={<CustomPieTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
+              <div style={{ display: "flex", justifyContent: "center", gap: 24, marginTop: 16 }}>
+                {trends.map(t => (
+                  <div key={t.risk_level} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 600, color: "var(--text-secondary)" }}>
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: RISK_COLORS[t.risk_level] }} />
+                    {t.risk_level}
+                  </div>
+                ))}
+              </div>
             </section>
           </div>
 
           {/* Sessions table */}
-          <section className="panel" style={{ padding: 20 }}>
-            <h2>Last 10 Sessions</h2>
+          <section className="panel">
+            <div style={{ padding: "32px 32px 8px" }}>
+              <h2>Recent Activity</h2>
+            </div>
             {(summary.recent_sessions || []).length === 0 ? (
-              <p className="muted" style={{ fontSize: 13 }}>No sessions recorded yet.</p>
+              <div style={{ padding: 32, textAlign: "center" }}>
+                <p className="muted">No session data available yet.</p>
+              </div>
             ) : (
               <div className="table-container">
                 <table className="session-table">
                   <thead>
                     <tr>
-                      <th>Date</th>
+                      <th>Date & Time</th>
                       <th>Duration</th>
                       <th>Peak Risk</th>
-                      <th>Avg Score</th>
+                      <th>Efficiency</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(summary.recent_sessions || []).map((row) => (
                       <tr key={row.id}>
-                        <td>{new Date(row.date).toLocaleString()}</td>
-                        <td>{row.duration_seconds}s</td>
+                        <td style={{ fontWeight: 600 }}>{new Date(row.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                        <td style={{ color: "var(--text-secondary)" }}>{Math.floor(row.duration_seconds / 60)}m {row.duration_seconds % 60}s</td>
                         <td>
                           <RiskBadge level={row.peak_risk} />
                         </td>
@@ -188,9 +204,10 @@ export default function Analytics({ userId }) {
                                 ? "var(--moderate)"
                                 : "var(--safe)",
                             fontWeight: 700,
+                            fontSize: 16
                           }}
                         >
-                          {Math.round(row.avg_score * 100)}%
+                          {Math.round((1 - row.avg_score) * 100)}%
                         </td>
                       </tr>
                     ))}

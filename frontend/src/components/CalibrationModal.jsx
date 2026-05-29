@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { CheckCircle, Loader2, RefreshCw } from "lucide-react";
+import { CheckCircle, Loader2, RefreshCw, Sparkles, ShieldCheck } from "lucide-react";
 import { computeCalibration, saveCalibration, startCalibration } from "../api/apiClient";
 import { CALIBRATION_SECONDS } from "../constants";
 
@@ -20,15 +20,12 @@ export default function CalibrationModal({
   const [saved, setSaved] = useState(false);
   const computeStarted = useRef(false);
   const lastClosed = useRef(false);
-  // Use a dynamic threshold derived from the first few EAR samples rather than
-  // a hardcoded 0.22 value that ignores individual anatomy.
   const earBaselineRef = useRef(null);
   const active = step === 2;
 
   useEffect(() => {
     if (!active) return undefined;
     if (frameData?.ear != null) {
-      // Build a dynamic baseline from the first 30 samples (~3 s at 10 fps)
       if (earBaselineRef.current === null) {
         earBaselineRef.current = frameData.ear;
       } else {
@@ -65,7 +62,7 @@ export default function CalibrationModal({
           onCalibrationEnd?.();
         })
         .catch(() => {
-          setError("Calibration could not be computed. Check backend connection and try again.");
+          setError("Neural computation failed. Please ensure environment lighting is sufficient.");
           onCalibrationEnd?.();
         });
     }
@@ -90,7 +87,7 @@ export default function CalibrationModal({
       onCalibrationStart?.();
       setStep(2);
     } catch {
-      setError("Calibration could not start. Check backend connection and try again.");
+      setError("Secure link could not be established. Check system connectivity.");
     }
   };
 
@@ -105,7 +102,7 @@ export default function CalibrationModal({
       setSaved(true);
       onSaved?.(savedUser);
     } catch {
-      setError("Calibration could not be saved. Check backend connection and try again.");
+      setError("Calibration profile could not be synchronized.");
     }
   };
 
@@ -114,66 +111,90 @@ export default function CalibrationModal({
     : 0;
 
   return (
-    <section className="panel calibration">
+    <section className="panel calibration" style={{ padding: 40, marginTop: 32 }}>
       {step === 1 && (
-        <div className="calibration-step">
-          <h2>Calibration</h2>
-          <p className="muted">
-            Look straight at the camera, stay alert, and blink normally for{" "}
-            {CALIBRATION_SECONDS} seconds. This personalises your fatigue thresholds.
+        <div className="calibration-step" style={{ textAlign: "center" }}>
+          <div style={{ background: "rgba(79, 140, 255, 0.1)", width: 64, height: 64, borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", color: "var(--accent)" }}>
+            <Sparkles size={32} />
+          </div>
+          <h2 style={{ fontSize: 28, marginBottom: 12 }}>Precision Calibration</h2>
+          <p className="muted" style={{ maxWidth: 460, margin: "0 auto 32px", fontSize: 15, lineHeight: 1.6 }}>
+            Synchronize your biometric patterns for enhanced detection accuracy. 
+            Look straight at the camera and remain alert for {CALIBRATION_SECONDS} seconds.
           </p>
-          <button className="primary-btn" onClick={begin}>
-            Start Calibration
+          <button className="primary-btn" onClick={begin} style={{ height: 54, padding: "0 40px", borderRadius: 16 }}>
+            Begin Synchronization
           </button>
         </div>
       )}
 
       {step === 2 && (
-        <div className="calibration-step">
-          <h2 className="calibration-countdown">{Math.max(remaining, 0)}s</h2>
-          <div className="calibration-progress-track">
-            <div className="calibration-progress-fill" style={{ width: `${progress}%` }} />
-          </div>
-          <p className="muted">
-            <Loader2 size={14} className="spin-icon" />
-            &nbsp;EAR {latest.ear.toFixed(3)} &nbsp;|&nbsp; MAR {latest.mar.toFixed(3)}
+        <div className="calibration-step" style={{ textAlign: "center" }}>
+          <h2 className="calibration-countdown" style={{ fontSize: 72, marginBottom: 8, color: "var(--text-primary)" }}>
+            {Math.max(remaining, 0)}<span style={{ fontSize: 24, color: "var(--text-muted)", marginLeft: 4 }}>s</span>
+          </h2>
+          <p style={{ fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: 1, fontSize: 13, marginBottom: 24 }}>
+            Capturing behavioral samples...
           </p>
+          <div className="calibration-progress-track" style={{ height: 10, background: "var(--bg-elevated)", marginBottom: 24 }}>
+            <div className="calibration-progress-fill" style={{ width: `${progress}%`, background: "var(--accent-gradient)" }} />
+          </div>
+          <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
+            <div className="metric-pill" style={{ background: "var(--bg-elevated)", border: "none" }}>
+              <span className="metric-label">EAR</span>
+              <span className="metric-value" style={{ fontWeight: 800 }}>{latest.ear.toFixed(3)}</span>
+            </div>
+            <div className="metric-pill" style={{ background: "var(--bg-elevated)", border: "none" }}>
+              <span className="metric-label">MAR</span>
+              <span className="metric-value" style={{ fontWeight: 800 }}>{latest.mar.toFixed(3)}</span>
+            </div>
+          </div>
         </div>
       )}
 
       {step === 3 && result && (
-        <div className="calibration-step">
-          <h2>
-            <CheckCircle size={18} style={{ color: "#10b981", verticalAlign: "middle" }} />
-            &nbsp;Calibration Complete
-          </h2>
-          <p className="muted">
-            Blink rate&nbsp;<strong>{result.baseline_blink_rate}/min</strong>
-            &nbsp;·&nbsp;EAR threshold&nbsp;<strong>{result.ear_threshold}</strong>
-            &nbsp;·&nbsp;MAR threshold&nbsp;<strong>{result.mar_threshold}</strong>
-          </p>
+        <div className="calibration-step" style={{ textAlign: "center" }}>
+          <div style={{ background: "rgba(16, 185, 129, 0.1)", width: 64, height: 64, borderRadius: 20, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px", color: "var(--safe)" }}>
+            <ShieldCheck size={32} />
+          </div>
+          <h2 style={{ fontSize: 28, marginBottom: 12 }}>Analysis Complete</h2>
+          <div style={{ display: "flex", justifyContent: "center", gap: 16, marginBottom: 32 }}>
+            <div className="panel" style={{ padding: "16px 24px", textAlign: "center", background: "var(--bg-elevated)", border: "none" }}>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>Blink Rate</div>
+              <div style={{ fontSize: 20, fontWeight: 800 }}>{result.baseline_blink_rate}/m</div>
+            </div>
+            <div className="panel" style={{ padding: "16px 24px", textAlign: "center", background: "var(--bg-elevated)", border: "none" }}>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>EAR Threshold</div>
+              <div style={{ fontSize: 20, fontWeight: 800 }}>{result.ear_threshold}</div>
+            </div>
+            <div className="panel" style={{ padding: "16px 24px", textAlign: "center", background: "var(--bg-elevated)", border: "none" }}>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, marginBottom: 4 }}>MAR Threshold</div>
+              <div style={{ fontSize: 20, fontWeight: 800 }}>{result.mar_threshold}</div>
+            </div>
+          </div>
+
           {!saved ? (
-            <button className="primary-btn" onClick={save}>
-              Save Calibration
+            <button className="primary-btn" onClick={save} style={{ height: 54, padding: "0 40px", borderRadius: 16 }}>
+              Apply Configuration
             </button>
           ) : (
-            <p className="success-text">
-              <CheckCircle size={14} style={{ verticalAlign: "middle" }} />
-              &nbsp;Saved — thresholds will apply on the next session.
-            </p>
+            <div className="success-text" style={{ justifyContent: "center", fontSize: 16, marginBottom: 16 }}>
+              <CheckCircle size={20} />
+              Biometric profile synchronized successfully.
+            </div>
           )}
           <button
             className="preview-retry"
-            style={{ marginTop: 8 }}
+            style={{ marginTop: 16, background: "transparent", border: "none", color: "var(--text-muted)", fontSize: 14, fontWeight: 600 }}
             onClick={() => { setStep(1); onCalibrationEnd?.(); }}
           >
-            <RefreshCw size={13} style={{ verticalAlign: "middle" }} />
-            &nbsp;Recalibrate
+            <RefreshCw size={14} style={{ verticalAlign: "middle", marginRight: 6 }} />
+            Recalibrate sensors
           </button>
         </div>
       )}
 
-      {error && <p className="error-text">{error}</p>}
+      {error && <p className="error-text" style={{ textAlign: "center", marginTop: 20 }}>{error}</p>}
     </section>
   );
 }

@@ -20,13 +20,7 @@ function formatTime(seconds) {
 /** Main real-time driver monitoring dashboard. */
 export default function Dashboard({ userId, userName, onRiskChange }) {
   const session = useSession(userId);
-
-  // videoRef is forwarded into VideoFeed so the WebSocket hook can capture
-  // frames directly from the browser's live camera stream
   const videoRef = useRef(null);
-
-  // Connect WebSocket immediately — the backend warms up while the user
-  // positions themselves. Session state only controls DB recording.
   const { frameData, isConnected, error } = useWebSocket(userId, true, videoRef);
 
   const [history, setHistory] = useState([]);
@@ -48,40 +42,49 @@ export default function Dashboard({ userId, userName, onRiskChange }) {
 
   return (
     <main className="page dashboard-page">
-      {/* Top bar */}
       <header className="topbar">
-        <div>
-          <h1>Driver Monitor</h1>
-          <p>
-            <span className={`conn-dot ${isConnected ? "live" : "offline"}`} />
-            {userName}
-            &nbsp;·&nbsp;
-            {formatTime(session.durationSeconds)}
-            &nbsp;·&nbsp;
-            {isConnected ? "Live" : "Offline"}
-            {error ? ` · ${error}` : ""}
-          </p>
+        <div className="topbar-bg-glow" />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
+          <div>
+            <h1>Driver Monitor</h1>
+            <p style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
+              <span className={`conn-dot ${isConnected ? "live" : "offline"}`} />
+              <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>{userName}</span>
+              <span style={{ color: "var(--text-muted)" }}>•</span>
+              <span style={{ fontFamily: "monospace", letterSpacing: 1, fontWeight: 600 }}>{formatTime(session.durationSeconds)}</span>
+              <span style={{ color: "var(--text-muted)" }}>•</span>
+              <span style={{ 
+                color: isConnected ? "var(--safe)" : "var(--text-muted)", 
+                fontWeight: 700, 
+                textTransform: "uppercase", 
+                fontSize: 11, 
+                letterSpacing: 0.5 
+              }}>
+                {isConnected ? "System Live" : "System Offline"}
+              </span>
+              {error && <span style={{ color: "var(--high)", fontWeight: 600 }}>· {error}</span>}
+            </p>
+          </div>
+          <button
+            className={session.sessionActive ? "danger-btn" : "primary-btn"}
+            onClick={session.sessionActive ? session.endSession : session.startSession}
+            style={{ display: "flex", alignItems: "center", gap: 10, borderRadius: 16, height: 54, padding: "0 32px" }}
+          >
+            {session.sessionActive ? (
+              <>
+                <Square size={18} fill="currentColor" />
+                Stop Monitoring
+              </>
+            ) : (
+              <>
+                <Play size={18} fill="currentColor" />
+                Start Monitoring
+              </>
+            )}
+          </button>
         </div>
-        <button
-          className={session.sessionActive ? "danger-btn" : "primary-btn"}
-          onClick={session.sessionActive ? session.endSession : session.startSession}
-          style={{ display: "flex", alignItems: "center", gap: 7 }}
-        >
-          {session.sessionActive ? (
-            <>
-              <Square size={14} />
-              Stop Session
-            </>
-          ) : (
-            <>
-              <Play size={14} />
-              Start Session
-            </>
-          )}
-        </button>
       </header>
 
-      {/* Main grid: video + right rail */}
       <div className="dashboard-grid">
         <VideoFeed ref={videoRef} frameData={frameData} isConnected={isConnected} />
         <aside className="right-rail">
@@ -97,14 +100,12 @@ export default function Dashboard({ userId, userName, onRiskChange }) {
         </aside>
       </div>
 
-      {/* Stats row */}
       <StatsBar
         frameData={frameData}
         durationSeconds={session.durationSeconds}
         previousData={previousData}
       />
 
-      {/* Trend chart */}
       <HistoryChart data={history} />
     </main>
   );
