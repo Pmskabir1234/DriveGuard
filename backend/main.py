@@ -1,3 +1,13 @@
+"""
+Copyright (c) 2026 Kabir
+
+This Source Code Form is subject to the terms of the
+Mozilla Public License, v. 2.0.
+If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/
+"""
+
+
 """FastAPI entry point for the Smart Driver Fatigue Detection System.
 
 WebSocket protocol (client → server):
