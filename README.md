@@ -133,3 +133,8 @@ The saved values are stored on the `User` row and applied to the next WebSocket 
 - Sound playback is non-blocking and gracefully skips when no audio device is available.
 - Docker webcam passthrough varies by platform; local backend execution is recommended for live camera demos.
 
+## License
+
+This project is licensed under the Mozilla Public License 2.0 (MPL-2.0).
+
+See the LICENSE file for details.
