@@ -4,7 +4,8 @@ A real-time AI-powered driver monitoring system for hackathon demos. It analyzes
 
 ## Demo Screenshots
 
-<img width="1916" height="990" alt="Screenshot 2026-05-28 033239" src="https://github.com/user-attachments/assets/760273d1-ec99-49ed-887d-3c64547aa4e3" /> <img width="1918" height="992" alt="Screenshot 2026-05-28 033333" src="https://github.com/user-attachments/assets/8e7eb945-56fb-430d-b15c-2648fd693694" />
+<img width="1919" height="991" alt="Screenshot 2026-05-30 010857" src="https://github.com/user-attachments/assets/5be1ab89-709d-43ad-b35e-1b58a151e5a6" />
+
 
 
 ## Architecture
@@ -124,7 +125,7 @@ The saved values are stored on the `User` row and applied to the next WebSocket 
 - Team: Nova
 - Members: Titli Bhowmick ▫️ Saad Kabir
 - Event: Ideatex (GDG HITK)
-- Demo link: https://drie-guard-ideatex.vercel.app/
+- Demo link: https://drive-guard-ideatex.vercel.app/
 
 ## Known Demo Notes
 
@@ -132,3 +133,8 @@ The saved values are stored on the `User` row and applied to the next WebSocket 
 - Sound playback is non-blocking and gracefully skips when no audio device is available.
 - Docker webcam passthrough varies by platform; local backend execution is recommended for live camera demos.
 
+## License
+
+This project is licensed under the Mozilla Public License 2.0 (MPL-2.0).
+
+See the LICENSE file for details.
