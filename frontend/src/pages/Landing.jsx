@@ -361,7 +361,7 @@ export default function Landing({ theme, setTheme }) {
             <span>DriveGuard</span>
           </div>
           <div className="text-[var(--text-muted)] text-sm">
-            &copy; {new Date().getFullYear()} DriveGuard Team. Built for Ideatex Hackathon.
+            &copy; {new Date().getFullYear()} DriveGuard Team. Built with passion.
           </div>
           <div className="flex items-center gap-6">
             <a href="https://github.com/saaadkabir/fatigue-detection" className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
