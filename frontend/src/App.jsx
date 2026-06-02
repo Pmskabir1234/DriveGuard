@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
-import { Activity, BarChart3, Gauge, Moon, Settings as SettingsIcon, Sun } from "lucide-react";
+import { NavLink, Route, Routes, useLocation, Outlet } from "react-router-dom";
+import { Activity, BarChart3, Moon, Settings as SettingsIcon, Sun, ShieldCheck } from "lucide-react";
 import Analytics from "./pages/Analytics";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import Landing from "./pages/Landing";
 
 /** Theme toggle component with premium glassmorphism. */
 function ThemeToggle({ theme, setTheme }) {
@@ -29,13 +30,52 @@ function ThemeToggle({ theme, setTheme }) {
   );
 }
 
-/** Application shell with persistent navigation and global user/risk state. */
+/** Layout for dashboard pages with sidebar and global state. */
+function DashboardLayout({ currentRisk }) {
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <div className="brand-orb flex items-center justify-center">
+             <ShieldCheck size={14} className="text-white" strokeWidth={3} />
+          </div>
+          <span>DriveGuard</span>
+        </div>
+
+        <nav>
+          <NavLink to="/dashboard" className={({ isActive }) => isActive ? "active" : ""}>
+            <Activity size={18} />
+            <span>Dashboard</span>
+          </NavLink>
+          <NavLink to="/analytics" className={({ isActive }) => isActive ? "active" : ""}>
+            <BarChart3 size={18} />
+            <span>Analytics</span>
+          </NavLink>
+          <NavLink to="/settings" className={({ isActive }) => isActive ? "active" : ""}>
+            <SettingsIcon size={18} />
+            <span>Settings</span>
+          </NavLink>
+        </nav>
+
+        <div className={`risk-chip ${currentRisk.toLowerCase()}`} title={`Current risk: ${currentRisk}`}>
+          {currentRisk}
+        </div>
+      </aside>
+
+      <div className="main-content">
+        <Outlet />
+      </div>
+    </div>
+  );
+}
+
+/** Root Application Component. */
 export default function App() {
   const [userId, setUserId] = useState(1);
   const [userName, setUserName] = useState("Demo Driver");
   const [currentRisk, setCurrentRisk] = useState("Safe");
+  const location = useLocation();
   
-  // Theme management
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("theme");
     if (saved) return saved;
@@ -47,66 +87,41 @@ export default function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Hide global toggle on landing page to use an integrated one
+  const isLanding = location.pathname === "/";
+
   return (
-    <div className="app-shell">
-      <ThemeToggle theme={theme} setTheme={setTheme} />
+    <>
+      {!isLanding && <ThemeToggle theme={theme} setTheme={setTheme} />}
       
-      <aside className="sidebar">
-        {/* Brand */}
-        <div className="brand">
-          <div className="brand-orb" />
-          <span>DriveGuard</span>
-        </div>
-
-        {/* Navigation */}
-        <nav>
-          <NavLink to="/" end>
-            <Activity size={18} />
-            <span>Dashboard</span>
-          </NavLink>
-          <NavLink to="/analytics">
-            <BarChart3 size={18} />
-            <span>Analytics</span>
-          </NavLink>
-          <NavLink to="/settings">
-            <SettingsIcon size={18} />
-            <span>Settings</span>
-          </NavLink>
-        </nav>
-
-        {/* Live risk indicator */}
-        <div
-          className={`risk-chip ${currentRisk.toLowerCase()}`}
-          title={`Current risk: ${currentRisk}`}
-        >
-          {currentRisk}
-        </div>
-      </aside>
-
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Dashboard
-              userId={userId}
-              userName={userName}
-              onRiskChange={setCurrentRisk}
-            />
-          }
-        />
-        <Route path="/analytics" element={<Analytics userId={userId} />} />
-        <Route
-          path="/settings"
-          element={
-            <Settings
-              userId={userId}
-              setUserId={setUserId}
-              userName={userName}
-              setUserName={setUserName}
-            />
-          }
-        />
+        <Route path="/" element={<Landing theme={theme} setTheme={setTheme} />} />
+        
+        <Route element={<DashboardLayout currentRisk={currentRisk} />}>
+          <Route
+            path="/dashboard"
+            element={
+              <Dashboard
+                userId={userId}
+                userName={userName}
+                onRiskChange={setCurrentRisk}
+              />
+            }
+          />
+          <Route path="/analytics" element={<Analytics userId={userId} />} />
+          <Route
+            path="/settings"
+            element={
+              <Settings
+                userId={userId}
+                setUserId={setUserId}
+                userName={userName}
+                setUserName={setUserName}
+              />
+            }
+          />
+        </Route>
       </Routes>
-    </div>
+    </>
   );
 }

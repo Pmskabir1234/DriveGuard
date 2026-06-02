@@ -12,7 +12,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "axios": "latest",
-    "lucide-react": "latest",
+    "lucide-react": "^1.17.0",
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -22,8 +22,8 @@
   "devDependencies": {
     "autoprefixer": "latest",
     "eslint": "latest",
-    "globals": "latest",
     "eslint-plugin-react": "latest",
+    "globals": "latest",
     "postcss": "latest",
     "tailwindcss": "^3.4.17",
     "vite": "latest"

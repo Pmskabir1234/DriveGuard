@@ -137,7 +137,6 @@ h1, h2, h3, p { margin: 0; }
   height: 24px;
   border-radius: 50%;
   background: var(--accent-gradient);
-  filter: blur(1px);
   box-shadow: 0 0 15px rgba(79, 140, 255, 0.4);
 }
 
@@ -472,7 +471,16 @@ h2 {
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
 }
 
-/* ─── Responsive adjustments ────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* ─── Responsive adjustments ─── */
 @media (max-width: 1200px) {
   .app-shell { grid-template-columns: 80px 1fr; }
   .sidebar span, .sidebar .brand span, .sidebar .risk-chip { display: none; }
